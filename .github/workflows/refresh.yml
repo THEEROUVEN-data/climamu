@@ -1,0 +1,43 @@
+name: ClimaMU data refresh
+
+on:
+  workflow_dispatch:          
+  schedule:
+    - cron: "0 3 1 * *"       
+
+permissions:
+  contents: write
+
+concurrency:
+  group: climamu-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt requests
+
+      - name: Refresh data
+        run: python src/refresh_data.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/store app/data
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Data refresh $(date -u +%Y-%m-%d)"
+            git push
+          fi

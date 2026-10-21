@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+import json
 
 st.set_page_config(page_title="ClimaMU", page_icon="☀️", layout="wide")
 
@@ -24,6 +25,7 @@ def load_data():
 
 
 outlook, profile, best, sites = load_data()
+status = json.loads((DATA / "status.json").read_text())
 names = sites["name"].tolist()
 
 # Sidebar controls
@@ -44,7 +46,8 @@ row = outlook[(outlook["site"] == site) & (outlook["month"] == month)].iloc[0]
 win = best[(best["site"] == site) & (best["month"] == month)].iloc[0]
 
 st.title("Solar outlook for Mauritius")
-st.caption(f"{site} ({region}) | {month_name} | based on 2006 to 2022 history")
+st.caption(f"{site} ({region}) | {month_name} | "
+           f"based on daily data from {status['first_date']} to {status['last_date']}")
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Typical day", f"{row['p50']:.2f} kWh/m²",

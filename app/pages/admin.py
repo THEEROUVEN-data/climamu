@@ -38,7 +38,8 @@ if st.sidebar.button("Log out"):
     st.rerun()
 
 status = json.loads((DATA / "status.json").read_text())
-tab1, tab2, tab3 = st.tabs(["Pipeline status", "Data quality", "Model results"])
+tab1, tab2, tab3 = st.tabs(
+    ["Pipeline status", "Data quality", "Model results"])
 
 with tab1:
     c = st.columns(4)
@@ -46,14 +47,22 @@ with tab1:
     c[1].metric("First day", status["first_date"])
     c[2].metric("Last day", status["last_date"])
     c[3].metric("Daily rows", f"{status['daily_rows']:,}")
-    st.caption(f"Dashboard data exported at {status['exported_at']}.")
-    st.info("Refreshes are run by the pipeline scripts. A button that starts a refresh job "
-            "on GitHub will be added later.")
+
+    st.caption(f"Dashboard data last updated {status['exported_at']}.")
+    log_path = DATA / "refresh_log.csv"
+    if log_path.exists():
+        st.subheader("Refresh history")
+        st.dataframe(pd.read_csv(log_path).sort_values("run_utc", ascending=False),
+                     hide_index=True)
+    else:
+        st.info("No automatic refresh has run yet.")
+
 
 with tab2:
     q = pd.read_csv(DATA / "quality_report.csv")
     st.dataframe(q, hide_index=True)
-    bad = q[(q["missing_values"] > 0) | (q["out_of_range"] > 0) | (q["missing_timestamps"] > 0)]
+    bad = q[(q["missing_values"] > 0) | (q["out_of_range"] > 0)
+            | (q["missing_timestamps"] > 0)]
     if bad.empty:
         st.success("All checks passed for all sites.")
     else:
@@ -67,4 +76,5 @@ with tab3:
                   labels={"value": "MAE (kWh/m²/day)", "horizon_days": "Horizon (days)"})
     st.plotly_chart(fig)
     st.dataframe(mae.round(3))
-    st.caption("History-only forecasts beat climatology only at day 1 (test period 2023 to 2025).")
+    st.caption(
+        "History-only forecasts beat climatology only at day 1 (test period 2023 to 2025).")
