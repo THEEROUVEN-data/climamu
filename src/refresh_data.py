@@ -36,19 +36,27 @@ def fetch_hourly(lat, lon, start, end):
     params = {"latitude": lat, "longitude": lon,
               "start_date": start.strftime("%Y-%m-%d"), "end_date": end.strftime("%Y-%m-%d"),
               "hourly": HOURLY, "timezone": "UTC"}
-    for _ in range(6):
-        r = requests.get(URL, params=params, timeout=120)
+    for attempt in range(1, 7):
+        try:
+            r = requests.get(URL, params=params, timeout=(15, 90))
+        except requests.exceptions.RequestException as err:
+            wait = 30 * attempt
+            print(
+                f"  request failed ({type(err).__name__}), retry {attempt}/6 in {wait} s")
+            time.sleep(wait)
+            continue
         if r.status_code == 200:
             df = pd.DataFrame(r.json()["hourly"])
             for col in LIMITS:
                 df[col] = pd.to_numeric(df[col], errors="coerce")
             return df
-        if r.status_code == 429:
-            print("  rate limited, waiting 5 minutes")
-            time.sleep(300)
+        if r.status_code in (429, 500, 502, 503, 504):
+            wait = 300 if r.status_code == 429 else 30 * attempt
+            print(f"  HTTP {r.status_code}, retry {attempt}/6 in {wait} s")
+            time.sleep(wait)
             continue
         sys.exit(f"Open-Meteo error {r.status_code}: {r.text[:200]}")
-    sys.exit("Open-Meteo kept rate limiting the requests")
+    sys.exit("Open-Meteo did not respond after several attempts; refresh aborted")
 
 
 def hourly_to_daily(df):

@@ -26,7 +26,11 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt requests
-
+      - name: Check Open-Meteo reachability
+        continue-on-error: true
+        run: |
+          curl -s -o /dev/null --max-time 60 -w "HTTP %{http_code} in %{time_total}s\n" \
+            "https://archive-api.open-meteo.com/v1/archive?latitude=-20.16&longitude=57.5&start_date=2026-10-01&end_date=2026-10-02&hourly=temperature_2m"
       - name: Refresh data
         run: python src/refresh_data.py
 
