@@ -64,3 +64,18 @@ Decision: one site from each pair was excluded (Chamarel, Bel Ombre, Trou d'Eau 
 
 - Island average June and December hourly profiles sum to 3.79 and 7.10 kWh/m2/day, matching the daily means.
 - Profile is symmetric around midday. Best 3-hour window is 11:00 to 14:00 (Jan to Sep) and 10:00 to 13:00 (Oct to Dec), holding 37% to 44% of daily energy. Windows in Oct to Dec are a near-tie.
+
+## Test 9: Out-of-sample check on 2026 (1 Jan to 14 Oct 2026, 3,444 site-days)
+
+- 83.2% of days fell inside the P10 to P90 range built from 2006 to 2025 (target 80%). Monthly coverage 0.76 to 0.89.
+- 2026 monthly mean radiation is above the 2006 to 2025 mean in January to September (average about +0.23 kWh/m2/day, about 4%). October is a partial month and not comparable.
+- Open question: real year-to-year variation, or a shift in the newest Open-Meteo data? Checked against NASA POWER (see the next test).
+- First refresh run: 3,444 new site-days, 168 overlap days replaced, 100% complete, revision MAE of the overlap rounded to 0.
+
+## Test 10: Is 2026 genuinely brighter, or has the newest Open-Meteo data shifted?
+
+- Mean daily radiation for January to September ranks 2026 third of 21 years (5.303 kWh/m2/day; 2011: 5.340, 2012: 5.320).
+- Both sources show 2026 above their 2006 to 2025 monthly means in all nine complete months (average +0.22 Open-Meteo, +0.27 NASA POWER), with the same pattern across months.
+- Agreement between sources in 2026 (284 days): mean bias +0.12 (2006 to 2025: +0.068), MAE 0.352 (2006 to 2025: 0.437).
+- Conclusion: no evidence of a drift in the newest data. Both sources may share inputs, so agreement is evidence, not proof.
+- First GitHub refresh run: no new days (same end date as the local run). A real revision test needs a later run.
