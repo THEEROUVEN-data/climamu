@@ -1,0 +1,25 @@
+﻿Ordinary 3-day windows, November to April (n=3743):
+         rain    wind    loss
+count  3743.0  3743.0  3743.0
+mean     13.8    30.4    -0.0
+std      18.1     7.8    13.3
+min       0.0    11.6   -27.2
+50%       7.9    29.1    -2.7
+90%      30.5    39.1    16.8
+99%      92.6    58.4    44.8
+max     184.7    82.1    76.1
+
+Storms within 100 km (n=11); share of ordinary windows below the storm median:
+  rain: storm median 41.4, higher than 94% of ordinary windows
+  wind: storm median 44.9, higher than 95% of ordinary windows
+  solar loss: storm median 26.1, higher than 95% of ordinary windows
+
+Storms within 200 km (n=23); share of ordinary windows below the storm median:
+  rain: storm median 35.1, higher than 92% of ordinary windows
+  wind: storm median 45.5, higher than 96% of ordinary windows
+  solar loss: storm median 21.5, higher than 93% of ordinary windows
+
+Storms within 300 km (n=41); share of ordinary windows below the storm median:
+  rain: storm median 31.3, higher than 90% of ordinary windows
+  wind: storm median 44.9, higher than 95% of ordinary windows
+  solar loss: storm median 22.7, higher than 94% of ordinary windows
